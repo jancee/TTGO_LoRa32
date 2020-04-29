@@ -12,9 +12,9 @@
 #define LEDPIN 2
 
 #define OLED_I2C_ADDR 0x3C
-#define OLED_RESET 16
-#define OLED_SDA 4
-#define OLED_SCL 15
+#define OLED_RESET -1
+#define OLED_SDA 21
+#define OLED_SCL 22
 
 unsigned int counter = 0;
 char TTN_response[30];
@@ -26,17 +26,17 @@ SSD1306 display (OLED_I2C_ADDR, OLED_SDA, OLED_SCL);
 // the bytes.
 
 // Copy the value from Device EUI from the TTN console in LSB mode.
-static const u1_t PROGMEM DEVEUI[8]= { ... };
+static const u1_t PROGMEM DEVEUI[8]= { 0x00, 0xF4, 0x94, 0x51, 0x97, 0xE9, 0x8C, 0x8A };
 void os_getDevEui (u1_t* buf) { memcpy_P(buf, DEVEUI, 8);}
 
 // Copy the value from Application EUI from the TTN console in LSB mode
-static const u1_t PROGMEM APPEUI[8]= { ... };
+static const u1_t PROGMEM APPEUI[8]= { 0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x02, 0xE5, 0x75 };
 void os_getArtEui (u1_t* buf) { memcpy_P(buf, APPEUI, 8);}
 
 // This key should be in big endian format (or, since it is not really a
 // number but a block of memory, endianness does not really apply). In
 // practice, a key taken from ttnctl can be copied as-is. Anyway its in MSB mode.
-static const u1_t PROGMEM APPKEY[16] = { ... };
+static const u1_t PROGMEM APPKEY[16] = { 0x00, 0x65, 0x01, 0x45, 0x9B, 0x35, 0x00, 0x09, 0xBC, 0x2F, 0x6A, 0x39, 0x33, 0x11, 0x62, 0x5D };
 void os_getDevKey (u1_t* buf) { memcpy_P(buf, APPKEY, 16);}
 
 static osjob_t sendjob;
@@ -49,8 +49,8 @@ const unsigned TX_INTERVAL = 120;
 const lmic_pinmap lmic_pins = {
     .nss = 18,
     .rxtx = LMIC_UNUSED_PIN,
-    .rst = 14,
-    .dio = {26, 33, 32}  // Pins for the Heltec ESP32 Lora board/ TTGO Lora32 with 3D metal antenna
+    .rst = 23,
+    .dio = {26, 26, 26}  // Pins for the Heltec ESP32 Lora board/ TTGO Lora32 with 3D metal antenna
 };
 
 void do_send(osjob_t* j){
