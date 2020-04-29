@@ -36,14 +36,14 @@ void os_getArtEui (u1_t* buf) { memcpy_P(buf, APPEUI, 8);}
 // This key should be in big endian format (or, since it is not really a
 // number but a block of memory, endianness does not really apply). In
 // practice, a key taken from ttnctl can be copied as-is. Anyway its in MSB mode.
-static const u1_t PROGMEM APPKEY[16] = { 0x00, 0x65, 0x01, 0x45, 0x9B, 0x35, 0x00, 0x09, 0xBC, 0x2F, 0x6A, 0x39, 0x33, 0x11, 0x62, 0x5D };
+static const u1_t PROGMEM APPKEY[16] = { 0x5D, 0x62, 0x11, 0x33, 0x39, 0x6A, 0x2F, 0xBC, 0x09, 0x00, 0x35, 0x9B, 0x45, 0x01, 0x65, 0x00 };
 void os_getDevKey (u1_t* buf) { memcpy_P(buf, APPKEY, 16);}
 
 static osjob_t sendjob;
 
 // Schedule TX every this many seconds (might become longer due to duty
 // cycle limitations).
-const unsigned TX_INTERVAL = 120;
+const unsigned TX_INTERVAL = 1;
 
 // Pin mapping
 const lmic_pinmap lmic_pins = {
@@ -204,7 +204,7 @@ void setup() {
 
     // Set data rate and transmit power for uplink (note: txpow seems to be ignored by the library)
     //LMIC_setDrTxpow(DR_SF11,14);
-    LMIC_setDrTxpow(DR_SF9,14);
+    LMIC_setDrTxpow(DR_SF9, 14);
 
     // Start job
     do_send(&sendjob);     // Will fire up also the join
