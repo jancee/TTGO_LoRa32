@@ -137,7 +137,7 @@ void onEvent (ev_t ev) {
         case EV_LINK_ALIVE:
             Serial.println(F("EV_LINK_ALIVE"));
             break;
-         default:
+        default:
             Serial.println(F("Unknown event"));
             break;
     }
@@ -172,7 +172,8 @@ void setup() {
 
     // Reset the MAC state. Session and pending data transfers will be discarded.
     LMIC_reset();
-    LMIC_setClockError(MAX_CLOCK_ERROR * 1 / 100);
+    LMIC_setClockError(MAX_CLOCK_ERROR * 10 / 100);
+    
     // Set up the channels used by the Things Network, which corresponds
     // to the defaults of most gateways. Without this, only three base
     // channels from the LoRaWAN specification are used, which certainly
@@ -204,11 +205,12 @@ void setup() {
 
     // Set data rate and transmit power for uplink (note: txpow seems to be ignored by the library)
     //LMIC_setDrTxpow(DR_SF11,14);
-    LMIC_setDrTxpow(DR_SF9, 14);
+    LMIC_setDrTxpow(DR_SF7, 14);
 
     // Start job
+    // LMIC_startJoining();
+
     do_send(&sendjob);     // Will fire up also the join
-    //LMIC_startJoining();
 }
 
 void loop() {
