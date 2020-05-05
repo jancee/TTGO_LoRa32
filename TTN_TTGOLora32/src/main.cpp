@@ -11,12 +11,12 @@
 #include <SSD1306.h>
 #include "soc/efuse_reg.h"
 
-#define LEDPIN 2
+#define LEDPIN 25
 
 #define OLED_I2C_ADDR 0x3C
-#define OLED_RESET 16
-#define OLED_SDA 4
-#define OLED_SCL 15
+#define OLED_RESET -1
+#define OLED_SDA 21
+#define OLED_SCL 22
 
 unsigned int counter = 0;
 
@@ -26,29 +26,34 @@ SSD1306 display (OLED_I2C_ADDR, OLED_SDA, OLED_SCL);
  * TODO: Change the following keys
  * NwkSKey: network session key, AppSKey: application session key, and DevAddr: end-device address
  *************************************/
-static u1_t NWKSKEY[16] = { ... };  // Paste here the key in MSB format
+static u1_t NWKSKEY[16] = { 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22 };  // Paste here the key in MSB format
 
-static u1_t APPSKEY[16] = { ... };  // Paste here the key in MSB format
+static u1_t APPSKEY[16] = { 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22 };  // Paste here the key in MSB format
 
-static u4_t DEVADDR = 0x00000000;   // Put here the device id in hexadecimal form.
+static u4_t DEVADDR = 0x01E0221E;   // Put here the device id in hexadecimal form.
 
-void os_getArtEui (u1_t* buf) { }
-void os_getDevEui (u1_t* buf) { }
-void os_getDevKey (u1_t* buf) { }
+static const u1_t PROGMEM DEVEUI[8]= { 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22 };
+void os_getDevEui (u1_t* buf) { memcpy_P(buf, DEVEUI, 8);}
+
+static const u1_t PROGMEM APPEUI[8]= { 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22 };
+void os_getArtEui (u1_t* buf) { memcpy_P(buf, APPEUI, 8);}
+
+static const u1_t PROGMEM APPKEY[16] = { 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22 };
+void os_getDevKey (u1_t* buf) { memcpy_P(buf, APPKEY, 16);}
 
 static osjob_t sendjob;
 
 // Schedule TX every this many seconds (might become longer due to duty
 // cycle limitations).
-const unsigned TX_INTERVAL = 60;
+const unsigned TX_INTERVAL = 10;
 char TTN_response[30];
 
 // Pin mapping
 const lmic_pinmap lmic_pins = {
     .nss = 18,
     .rxtx = LMIC_UNUSED_PIN,
-    .rst = 14,
-    .dio = {26, 33, 32}  // Pins for the Heltec ESP32 Lora board/ TTGO Lora32 with 3D metal antenna
+    .rst = 23,
+    .dio = {26, 34, 35}  // Pins for the Heltec ESP32 Lora board/ TTGO Lora32 with 3D metal antenna
 };
 
 void do_send(osjob_t* j){
@@ -103,6 +108,8 @@ void onEvent (ev_t ev) {
         digitalWrite(LEDPIN, LOW);
         display.drawString (0, 50, String (counter));
         display.display ();
+    } else {
+        Serial.println(F("onEvent: ???"));
     }
 }
 

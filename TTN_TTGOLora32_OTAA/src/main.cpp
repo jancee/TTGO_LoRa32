@@ -43,14 +43,14 @@ static osjob_t sendjob;
 
 // Schedule TX every this many seconds (might become longer due to duty
 // cycle limitations).
-const unsigned TX_INTERVAL = 1;
+const unsigned TX_INTERVAL = 10;
 
 // Pin mapping
 const lmic_pinmap lmic_pins = {
     .nss = 18,
     .rxtx = LMIC_UNUSED_PIN,
     .rst = 23,
-    .dio = {26, 26, 26}  // Pins for the Heltec ESP32 Lora board/ TTGO Lora32 with 3D metal antenna
+    .dio = {26, 34, 35}  // Pins for the Heltec ESP32 Lora board/ TTGO Lora32 with 3D metal antenna
 };
 
 void do_send(osjob_t* j){
@@ -173,7 +173,6 @@ void setup() {
     // Reset the MAC state. Session and pending data transfers will be discarded.
     LMIC_reset();
     LMIC_setClockError(MAX_CLOCK_ERROR * 10 / 100);
-    
     // Set up the channels used by the Things Network, which corresponds
     // to the defaults of most gateways. Without this, only three base
     // channels from the LoRaWAN specification are used, which certainly
@@ -205,10 +204,10 @@ void setup() {
 
     // Set data rate and transmit power for uplink (note: txpow seems to be ignored by the library)
     //LMIC_setDrTxpow(DR_SF11,14);
-    LMIC_setDrTxpow(DR_SF7, 14);
+    LMIC_setDrTxpow(DR_SF9, 14);
 
     // Start job
-    // LMIC_startJoining();
+    LMIC_startJoining();
 
     do_send(&sendjob);     // Will fire up also the join
 }
